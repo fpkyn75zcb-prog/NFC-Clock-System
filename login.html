@@ -31,7 +31,6 @@ border:0;
 button{
 background:#00aaff;
 color:white;
-cursor:pointer;
 }
 </style>
 
@@ -94,20 +93,19 @@ try{
 
 await signInWithEmailAndPassword(
 auth,
-email.value,
-password.value
+document.getElementById("email").value,
+document.getElementById("password").value
 );
 
-location.href="admin.html";
+window.location.href="admin.html";
 
-}catch(e){
+}catch(error){
 
-document.getElementById("error").innerText=e.message;
+document.getElementById("error").innerText = error.message;
 
 }
 
 };
-
 
 </script>
 

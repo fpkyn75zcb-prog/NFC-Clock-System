@@ -41,9 +41,7 @@ color:white;
 
 </head>
 
-
 <body>
-
 
 <div class="container">
 
@@ -58,9 +56,7 @@ Loading records...
 </div>
 
 
-
 <script type="module">
-
 
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
@@ -84,7 +80,6 @@ signOut
 from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 
-
 const firebaseConfig = {
 
 apiKey: "AIzaSyCdbqYTc3-mlHuaBzZnwH-uiJgcUAEySTc",
@@ -102,7 +97,6 @@ appId: "1:283731745865:web:60021fc03d73c123c83398"
 };
 
 
-
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
@@ -115,7 +109,7 @@ onAuthStateChanged(auth,(user)=>{
 
 if(!user){
 
-location.href="login.html";
+window.location.href="login.html";
 
 }else{
 
@@ -176,13 +170,12 @@ document.getElementById("logout").onclick=async()=>{
 
 await signOut(auth);
 
-location.href="login.html";
+window.location.href="login.html";
 
 };
 
 
 </script>
-
 
 </body>
 </html>
