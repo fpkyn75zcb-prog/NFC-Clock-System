@@ -1,6 +1,6 @@
 [
   {
-    "employeeID": "EMP001",
+    "employeeId": "EMP001",
     "name": "Anzio Fogle",
     "position": "Manager",
     "cardUID": "04:82:55:3C:C8:2A:81"
