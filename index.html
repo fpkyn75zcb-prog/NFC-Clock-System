@@ -62,7 +62,6 @@ Clock Out
 
 </div>
 
-
 <script>
 
 let employees = [];
@@ -70,11 +69,10 @@ let currentEmployee = null;
 
 
 fetch("employees.json")
-.then(r => r.json())
+.then(response => response.json())
 .then(data => {
 
-    employees = data.employees;
-
+    employees = data;
     loadEmployee();
 
 });
@@ -82,11 +80,11 @@ fetch("employees.json")
 
 function loadEmployee(){
 
-    let params = new URLSearchParams(
+    const params = new URLSearchParams(
         window.location.search
     );
 
-    let id = params.get("employee");
+    const id = params.get("employee");
 
 
     if(!id){
@@ -95,7 +93,7 @@ function loadEmployee(){
 
 
     currentEmployee = employees.find(
-        e => e.employeeId === id
+        employee => employee.employeeId === id
     );
 
 
@@ -108,6 +106,11 @@ function loadEmployee(){
         Position: ${currentEmployee.position}
 
         `;
+
+    } else {
+
+        document.getElementById("employee").innerHTML =
+        "Employee not found";
 
     }
 
@@ -127,24 +130,17 @@ function clock(action){
 
     let record = {
 
-        employeeId:
-        currentEmployee.employeeId,
-
-        name:
-        currentEmployee.name,
-
-        action:
-        action,
-
-        time:
-        new Date().toLocaleString()
+        employeeId: currentEmployee.employeeId,
+        name: currentEmployee.name,
+        action: action,
+        time: new Date().toLocaleString()
 
     };
 
 
     let logs =
     JSON.parse(
-    localStorage.getItem("clockRecords")
+        localStorage.getItem("clockRecords")
     ) || [];
 
 
@@ -152,8 +148,8 @@ function clock(action){
 
 
     localStorage.setItem(
-    "clockRecords",
-    JSON.stringify(logs)
+        "clockRecords",
+        JSON.stringify(logs)
     );
 
 
@@ -165,21 +161,21 @@ function clock(action){
 
 function showRecords(){
 
-let logs =
-JSON.parse(
-localStorage.getItem("clockRecords")
-) || [];
+    let logs =
+    JSON.parse(
+        localStorage.getItem("clockRecords")
+    ) || [];
 
 
-document.getElementById("records").innerHTML =
-logs.map(x => `
+    document.getElementById("records").innerHTML =
+    logs.map(record => `
 
-<hr>
-${x.name}<br>
-${x.action}<br>
-${x.time}
+    <hr>
+    ${record.name}<br>
+    ${record.action}<br>
+    ${record.time}
 
-`).join("");
+    `).join("");
 
 }
 
