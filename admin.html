@@ -6,38 +6,50 @@
 
 <style>
 
-body {
-    font-family: Arial;
-    background:#111;
-    color:white;
-    padding:30px;
-    text-align:center;
+body{
+font-family:Arial;
+background:#111;
+color:white;
+padding:30px;
+text-align:center;
 }
 
-.container {
-    max-width:700px;
-    margin:auto;
-    background:#222;
-    padding:25px;
-    border-radius:15px;
+.container{
+max-width:700px;
+margin:auto;
+background:#222;
+padding:25px;
+border-radius:15px;
 }
 
-.record {
-    background:#333;
-    padding:15px;
-    margin:10px;
-    border-radius:10px;
+.record{
+background:#333;
+padding:15px;
+margin:10px;
+border-radius:10px;
+}
+
+button{
+padding:10px;
+border-radius:8px;
+border:0;
+background:#e33;
+color:white;
 }
 
 </style>
 
 </head>
 
+
 <body>
+
 
 <div class="container">
 
 <h1>NFC Clock Admin</h1>
+
+<button id="logout">Logout</button>
 
 <div id="records">
 Loading records...
@@ -46,9 +58,11 @@ Loading records...
 </div>
 
 
+
 <script type="module">
 
-import { initializeApp } 
+
+import { initializeApp }
 from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
 
@@ -60,6 +74,15 @@ query,
 orderBy
 }
 from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+import {
+getAuth,
+onAuthStateChanged,
+signOut
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
 
 
 const firebaseConfig = {
@@ -79,28 +102,49 @@ appId: "1:283731745865:web:60021fc03d73c123c83398"
 };
 
 
+
 const app = initializeApp(firebaseConfig);
 
 const db = getFirestore(app);
+
+const auth = getAuth(app);
+
+
+
+onAuthStateChanged(auth,(user)=>{
+
+if(!user){
+
+location.href="login.html";
+
+}else{
+
+loadRecords();
+
+}
+
+});
 
 
 
 async function loadRecords(){
 
 const result = await getDocs(
+
 query(
 collection(db,"clockRecords"),
 orderBy("time","desc")
 )
+
 );
 
 
-let output = "";
+let output="";
 
 
-result.forEach(doc => {
+result.forEach(doc=>{
 
-let data = doc.data();
+let data=doc.data();
 
 
 output += `
@@ -122,13 +166,19 @@ Time: ${data.time.toDate()}
 });
 
 
-document.getElementById("records").innerHTML = output;
-
+document.getElementById("records").innerHTML=output;
 
 }
 
 
-loadRecords();
+
+document.getElementById("logout").onclick=async()=>{
+
+await signOut(auth);
+
+location.href="login.html";
+
+};
 
 
 </script>

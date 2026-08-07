@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>NFC Clock Login</title>
+
+<style>
+body{
+font-family:Arial;
+background:#111;
+color:white;
+text-align:center;
+padding:40px;
+}
+
+.box{
+background:#222;
+padding:25px;
+border-radius:15px;
+max-width:400px;
+margin:auto;
+}
+
+input,button{
+width:90%;
+padding:12px;
+margin:10px;
+border-radius:8px;
+border:0;
+}
+
+button{
+background:#00aaff;
+color:white;
+cursor:pointer;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h1>Admin Login</h1>
+
+<input id="email" placeholder="Email">
+
+<input id="password" type="password" placeholder="Password">
+
+<button id="login">Login</button>
+
+<p id="error"></p>
+
+</div>
+
+
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+getAuth,
+signInWithEmailAndPassword
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCdbqYTc3-mlHuaBzZnwH-uiJgcUAEySTc",
+
+authDomain: "nfc-clock-system.firebaseapp.com",
+
+projectId: "nfc-clock-system",
+
+storageBucket: "nfc-clock-system.firebasestorage.app",
+
+messagingSenderId: "283731745865",
+
+appId: "1:283731745865:web:60021fc03d73c123c83398"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+
+document.getElementById("login").onclick = async()=>{
+
+try{
+
+await signInWithEmailAndPassword(
+auth,
+email.value,
+password.value
+);
+
+location.href="admin.html";
+
+}catch(e){
+
+document.getElementById("error").innerText=e.message;
+
+}
+
+};
+
+
+</script>
+
+</body>
+</html>
