@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>NFC Clock Admin</title>
+
+<style>
+
+body {
+    font-family: Arial;
+    background:#111;
+    color:white;
+    padding:30px;
+    text-align:center;
+}
+
+.container {
+    max-width:700px;
+    margin:auto;
+    background:#222;
+    padding:25px;
+    border-radius:15px;
+}
+
+.record {
+    background:#333;
+    padding:15px;
+    margin:10px;
+    border-radius:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>NFC Clock Admin</h1>
+
+<div id="records">
+Loading records...
+</div>
+
+</div>
+
+
+<script type="module">
+
+import { initializeApp } 
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+
+import {
+getFirestore,
+collection,
+getDocs,
+query,
+orderBy
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCdbqYTc3-mlHuaBzZnwH-uiJgcUAEySTc",
+
+authDomain: "nfc-clock-system.firebaseapp.com",
+
+projectId: "nfc-clock-system",
+
+storageBucket: "nfc-clock-system.firebasestorage.app",
+
+messagingSenderId: "283731745865",
+
+appId: "1:283731745865:web:60021fc03d73c123c83398"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
+
+
+async function loadRecords(){
+
+const result = await getDocs(
+query(
+collection(db,"clockRecords"),
+orderBy("time","desc")
+)
+);
+
+
+let output = "";
+
+
+result.forEach(doc => {
+
+let data = doc.data();
+
+
+output += `
+
+<div class="record">
+
+Employee: ${data.name}<br>
+
+ID: ${data.employeeId}<br>
+
+Action: ${data.action}<br>
+
+Time: ${data.time.toDate()}
+
+</div>
+
+`;
+
+});
+
+
+document.getElementById("records").innerHTML = output;
+
+
+}
+
+
+loadRecords();
+
+
+</script>
+
+
+</body>
+</html>
