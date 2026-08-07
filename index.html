@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>NFC Employee Clock</title>
+
+<style>
+body {
+    font-family: Arial;
+    background:#111;
+    color:white;
+    text-align:center;
+    padding:30px;
+}
+
+.container {
+    max-width:500px;
+    margin:auto;
+    background:#222;
+    padding:25px;
+    border-radius:15px;
+}
+
+button {
+    width:90%;
+    padding:15px;
+    margin:10px;
+    font-size:18px;
+    border-radius:10px;
+}
+
+.card {
+    background:#333;
+    padding:15px;
+    margin-top:20px;
+    border-radius:10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>NFC Employee Clock</h1>
+
+<div class="card" id="employee">
+Scan NFC card
+</div>
+
+<button onclick="clock('CLOCK IN')">
+Clock In
+</button>
+
+<button onclick="clock('CLOCK OUT')">
+Clock Out
+</button>
+
+<h2>Records</h2>
+
+<div id="records"></div>
+
+</div>
+
+
+<script>
+
+let employees = [];
+let currentEmployee = null;
+
+
+fetch("employees.json")
+.then(r => r.json())
+.then(data => {
+
+    employees = data.employees;
+
+    loadEmployee();
+
+});
+
+
+function loadEmployee(){
+
+    let params = new URLSearchParams(
+        window.location.search
+    );
+
+    let id = params.get("employee");
+
+
+    if(!id){
+        return;
+    }
+
+
+    currentEmployee = employees.find(
+        e => e.employeeId === id
+    );
+
+
+    if(currentEmployee){
+
+        document.getElementById("employee").innerHTML = `
+
+        Employee ID: ${currentEmployee.employeeId}<br>
+        Name: ${currentEmployee.name}<br>
+        Position: ${currentEmployee.position}
+
+        `;
+
+    }
+
+}
+
+
+
+function clock(action){
+
+    if(!currentEmployee){
+
+        alert("Scan NFC card first");
+        return;
+
+    }
+
+
+    let record = {
+
+        employeeId:
+        currentEmployee.employeeId,
+
+        name:
+        currentEmployee.name,
+
+        action:
+        action,
+
+        time:
+        new Date().toLocaleString()
+
+    };
+
+
+    let logs =
+    JSON.parse(
+    localStorage.getItem("clockRecords")
+    ) || [];
+
+
+    logs.push(record);
+
+
+    localStorage.setItem(
+    "clockRecords",
+    JSON.stringify(logs)
+    );
+
+
+    showRecords();
+
+}
+
+
+
+function showRecords(){
+
+let logs =
+JSON.parse(
+localStorage.getItem("clockRecords")
+) || [];
+
+
+document.getElementById("records").innerHTML =
+logs.map(x => `
+
+<hr>
+${x.name}<br>
+${x.action}<br>
+${x.time}
+
+`).join("");
+
+}
+
+
+showRecords();
+
+</script>
+
+</body>
+</html>
