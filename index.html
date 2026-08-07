@@ -62,7 +62,42 @@ Clock Out
 
 </div>
 
-<script>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import { 
+getFirestore,
+collection,
+addDoc,
+getDocs,
+query,
+orderBy
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+const firebaseConfig = {
+
+apiKey: "AIzaSyCdbqYTc3-mlHuaBzZnwH-uiJgcUAEySTc",
+
+authDomain: "nfc-clock-system.firebaseapp.com",
+
+projectId: "nfc-clock-system",
+
+storageBucket: "nfc-clock-system.firebasestorage.app",
+
+messagingSenderId: "283731745865",
+
+appId: "1:283731745865:web:60021fc03d73c123c83398"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+
 
 let employees = [];
 let currentEmployee = null;
@@ -72,115 +107,116 @@ fetch("employees.json")
 .then(response => response.json())
 .then(data => {
 
-    employees = data;
-    loadEmployee();
+employees = data;
+
+loadEmployee();
 
 });
 
 
 function loadEmployee(){
 
-    const params = new URLSearchParams(
-        window.location.search
-    );
-
-    const id = params.get("employee");
+const params = new URLSearchParams(
+window.location.search
+);
 
 
-    if(!id){
-        return;
-    }
+const id = params.get("employee");
 
 
-    currentEmployee = employees.find(
-        employee => employee.employeeId === id
-    );
+if(!id){
+return;
+}
 
 
-    if(currentEmployee){
+currentEmployee = employees.find(
+employee => employee.employeeId === id
+);
 
-        document.getElementById("employee").innerHTML = `
 
-        Employee ID: ${currentEmployee.employeeId}<br>
-        Name: ${currentEmployee.name}<br>
-        Position: ${currentEmployee.position}
+if(currentEmployee){
 
-        `;
+document.getElementById("employee").innerHTML = `
 
-    } else {
+Employee ID: ${currentEmployee.employeeId}<br>
+Name: ${currentEmployee.name}<br>
+Position: ${currentEmployee.position}
 
-        document.getElementById("employee").innerHTML =
-        "Employee not found";
+`;
 
-    }
+}
 
 }
 
 
 
-function clock(action){
-
-    if(!currentEmployee){
-
-        alert("Scan NFC card first");
-        return;
-
-    }
+window.clock = async function(action){
 
 
-    let record = {
+if(!currentEmployee){
 
-        employeeId: currentEmployee.employeeId,
-        name: currentEmployee.name,
-        action: action,
-        time: new Date().toLocaleString()
+alert("Scan NFC card first");
 
-    };
+return;
 
-
-    let logs =
-    JSON.parse(
-        localStorage.getItem("clockRecords")
-    ) || [];
+}
 
 
-    logs.push(record);
+await addDoc(collection(db,"clockRecords"),{
+
+employeeId: currentEmployee.employeeId,
+
+name: currentEmployee.name,
+
+action: action,
+
+time: new Date()
+
+});
 
 
-    localStorage.setItem(
-        "clockRecords",
-        JSON.stringify(logs)
-    );
-
-
-    showRecords();
+showRecords();
 
 }
 
 
 
-function showRecords(){
+async function showRecords(){
 
-    let logs =
-    JSON.parse(
-        localStorage.getItem("clockRecords")
-    ) || [];
+const records = await getDocs(
+query(
+collection(db,"clockRecords"),
+orderBy("time","desc")
+)
+);
 
 
-    document.getElementById("records").innerHTML =
-    logs.map(record => `
+document.getElementById("records").innerHTML = "";
 
-    <hr>
-    ${record.name}<br>
-    ${record.action}<br>
-    ${record.time}
 
-    `).join("");
+records.forEach(record => {
+
+
+let data = record.data();
+
+
+document.getElementById("records").innerHTML += `
+
+<hr>
+${data.name}<br>
+${data.action}<br>
+${data.time.toDate()}
+
+`;
+
+});
+
 
 }
 
 
 showRecords();
+
 
 </script>
 
